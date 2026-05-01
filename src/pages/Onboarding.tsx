@@ -88,8 +88,8 @@ export default function Onboarding() {
       setisGenerating(true);
       await generatePlan();
       navigate("/profile");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save profile");
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Failed to save profile");
     } finally {
       setisGenerating(false);
     }
@@ -168,6 +168,9 @@ export default function Onboarding() {
                   value={formData.injuries}
                   onChange={(e) => updateForm("injuries", e.target.value)}
                 />
+                {error && (
+                  <p className="text-sm text-red-500">{error}</p>
+                )}
                 <div className="flex gap-3 pt-2">
                   <Button type="submit" className="flex-1 gap-2">
                     Generate My Plan <ArrowRight className="w-4 h-4" />
