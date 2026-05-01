@@ -14,7 +14,7 @@ export default function Navbar() {
           className="flex items-center gap-2 text-[var(--color-foreground)]"
         >
           <Dumbbell className="w-6 h-6 text-[var(--color-accent)]" />
-          <span className="font-semibold text-lg">Gym AI Planner</span>
+          <span className="font-semibold text-lg">Gym Planner AI</span>
         </Link>
         <nav>
           {user ? (
