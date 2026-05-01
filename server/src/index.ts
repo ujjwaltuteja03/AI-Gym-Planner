@@ -19,6 +19,9 @@ app.use(express.json());
 app.use('/api/plan', planRouter);
 app.use('/api/profile', profileRouter);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Vercel handles the server lifecycle, so we export the app instance.
+// The app.listen() block is commented out so you can still run it locally if needed.
+/* app.listen(PORT, () => {
+   console.log(`Server is running on port ${PORT}`);
+ }); */
+export default app;
