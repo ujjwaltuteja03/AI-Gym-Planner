@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "serve -s dist"
   },
   "dependencies": {
     "@neondatabase/neon-js": "^0.4.0-beta",
@@ -16,6 +17,7 @@
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-router-dom": "^7.14.2",
+    "serve": "^14.2.6",
     "tailwindcss": "^4.2.4"
   },
   "devDependencies": {
