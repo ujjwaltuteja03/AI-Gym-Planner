@@ -1,7 +1,7 @@
 import { Router, type Request, type Response } from "express";
-import { prisma } from "../lib/prisma";
+import { prisma } from "../lib/prisma.js";
 import { version } from "node:os";
-import { generateTrainingPlan } from "../lib/ai";
+import { generateTrainingPlan } from "../lib/ai.js";
 
 export const planRouter = Router();
 
