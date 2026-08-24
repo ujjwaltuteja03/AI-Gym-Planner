@@ -35,7 +35,7 @@ export async function generateTrainingPlan(
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "nvidia/nemotron-3-nano-30b-a3b:free",
+      model: "nvidia/llama-nemotron-rerank-vl-1b-v2:free",
       messages: [
         {
           role: "system",
