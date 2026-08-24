@@ -6,7 +6,7 @@ dotenv.config();
 
 export async function generateTrainingPlan(
   profile: UserProfile | Record<string, any>,
-): Promise<Omit<TrainingPlan, "id" | "userId" | "version" |"createdAt">> {
+): Promise<Omit<TrainingPlan, "id" | "userId" | "version" | "createdAt">> {
   const normalizedProfile: UserProfile = {
     goal: profile.goal || "bulk",
     experience: profile.experience || "intermediate",
@@ -35,34 +35,39 @@ export async function generateTrainingPlan(
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "nvidia/llama-nemotron-rerank-vl-1b-v2:free",
+      model: "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
       messages: [
         {
           role: "system",
           content:
-            "You are an expert fitnes trainer and program designer. You must respond with valid JSON only. Do not include any markdown, reasoning or additional text.",
+            "You are an expert fitness trainer and program designer. Generate the requested JSON directly without explanation. Respond with valid JSON only. Do not include markdown or additional text.",
         },
         {
-            role: "user",
-            content: prompt,
-        }
+          role: "user",
+          content: prompt,
+        },
       ],
-      temperature: 0.7,
+      temperature: 0.4,
+      max_tokens: 2000,
       response_format: {
         type: "json_object",
       },
     });
+
+    console.log("[AI] Model used:", completion.model);
+    console.log("[AI] Usage:", completion.usage);
+    console.log("[AI] Raw response:", completion.choices[0]?.message?.content);
+
     const content = completion.choices[0].message.content;
-    if(!content) {
-        console.error(
-            "[AI] No content in response:",
-            JSON.stringify(completion, null, 2),
-        );
-        throw new Error("No content in AI response");
+    if (!content) {
+      console.error(
+        "[AI] No content in response:",
+        JSON.stringify(completion, null, 2),
+      );
+      throw new Error("No content in AI response");
     }
     const planData = JSON.parse(content);
     return formatPlanResponse(planData, normalizedProfile);
-
   } catch (error) {
     console.error("[AI] Error generating training plan:", error);
     throw error;
@@ -147,7 +152,7 @@ Generate a complete training plan in JSON format with this exact structure:
     "goal": "brief description of the training goal",
     "frequency": "X days per week",
     "split": "training split name",
-    "notes": "important notes about the program (2-3 sentences)"
+    "notes": "important notes about the program (1-2 short sentences)"
   },
   "weeklySchedule": [
     {
@@ -161,23 +166,23 @@ Generate a complete training plan in JSON format with this exact structure:
           "rest": "2-3 min",
           "rpe": 8,
           "notes": "form cues or tips (optional)",
-          "alternatives": ["Alternative 1", "Alternative 2"]
+          "alternatives": ["Alternative 1"]
         }
       ]
     }
   ],
-  "progression": "detailed progression strategy (2-3 sentences explaining how to progress)"
+  "progression": "brief progression strategy (1-2 sentences)"
 }
 
   Requirements:
   - Create exactly ${profile.days_per_week} workout days
   - Each workout should fit within ${profile.session_length} minutes
-  - Include 4-6 exercises per workout
+  - Include exactly 4 exercises per workout
   - RPE (Rate of Perceived Exertion) should be 6-9
   - Include compound movements for beginners/intermediate, advanced can have more isolation
   - Match the preferred split type: ${profile.preferred_split}
   - ${profile.injuries ? `Avoid exercises that could aggravate: ${profile.injuries}` : ""}
-  - Provide exercise alternatives where appropriate
+  - Provide at most 1 exercise alternative where appropriate
   - Make it progressive and suitable for ${experienceMap[profile.experience] || profile.experience} level
   
   Return ONLY the JSON object (no markdown, no extra text).
